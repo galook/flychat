@@ -14,19 +14,12 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('uploads'))
-
+app.use(express.static("uploads"));
 
 const genDate = () => {
   a = new Date().toLocaleTimeString().split(":");
   a[2] = a[2].slice(3);
   return `${a[0]}:${a[1]} ${a[2]}`;
-};
-const defaultMessage = {
-  seat: "Server",
-  nick: "Quvia",
-  date: genDate(),
-  content: "System has started",
 };
 
 const get = () => {
@@ -34,6 +27,12 @@ const get = () => {
     const a = fs.readFileSync("./mess.json");
     return JSON.parse(a);
   } catch (e) {
+    const defaultMessage = {
+      seat: "Server",
+      nick: "Quvia",
+      date: genDate(),
+      content: "System has started",
+    };
     fs.writeFileSync("./mess.json", JSON.stringify([defaultMessage]));
     return get();
   }
@@ -61,8 +60,8 @@ app.get("/test", (req, res) => {
 });
 app.get("/renew", (req, res) => {
   fs.writeFileSync("./mess.json", JSON.stringify([defaultMessage]));
-  fs.rmdirSync('./uploads', { recursive: true })
-  fs.mkdirSync('./uploads')
+  fs.rmdirSync("./uploads", { recursive: true });
+  fs.mkdirSync("./uploads");
 
   res.redirect("/");
   messages = get();
@@ -85,7 +84,11 @@ app.get("/", (req, res) => {
               message.nick ? "~ " + message.nick : ""
             }</i>:  <span class="messageContent"> ${
               message.content ? message.content : ""
-            } </span> ${message.file ? `<br> <a href="${message.file}"><img src="${message.file}" class="msgImg"/></a>` : ``}`;
+            } </span> ${
+              message.file
+                ? `<br> <a href="${message.file}"><img src="${message.file}" class="msgImg"/></a>`
+                : ``
+            }`;
           })
           .join("<br>")
       )
@@ -99,15 +102,15 @@ app.post("/set", (req, res) => {
     nick: req.body.nick,
     date: genDate(),
     content: req.body.message,
-    file: null
+    file: null,
   };
   if (req.files) {
     console.log(req.files);
-    let dnw = Date.now()
+    let dnw = Date.now();
     req.files.img.mv(`./uploads/${dnw}.jpg`);
-    nMess.file = `/${dnw}.jpg`
-  }     
-  console.log(nMess)
+    nMess.file = `/${dnw}.jpg`;
+  }
+  console.log(nMess);
   messages.push(nMess);
 
   res.send(`
