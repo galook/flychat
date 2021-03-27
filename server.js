@@ -59,7 +59,8 @@ app.get("/test", (req, res) => {
   res.send(new Date().toLocaleString());
 });
 app.get("/renew", (req, res) => {
-  fs.writeFileSync("./mess.json", JSON.stringify([defaultMessage]));
+  fs.rmSync('./mess.json')
+  get()
   fs.rmdirSync("./uploads", { recursive: true });
   fs.mkdirSync("./uploads");
 
